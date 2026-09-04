@@ -9951,12 +9951,16 @@ namespace DOL.GS
             IDictionary<Specialization, int> careers = SkillBase.GetSpecializationCareer(CharacterClass.ID);
 
             // Remove All Trainable Specialization or "Career Spec" that aren't managed by This Data Career anymore
-            var speclist = GetSpecList();
-            var careerslist = careers.Keys.Select(k => k.KeyName.ToLower());
-            foreach (var spec in speclist.Where(sp => sp.Trainable || !sp.AllowSave))
+            // added a check for classless midgard to avoid removing specs that are not in the career list, but are still valid for the player.
+            if (CharacterClass.ID != (int)eCharacterClass.ClasslessMidgard)
             {
-                if (!careerslist.Contains(spec.KeyName.ToLower()))
-                    RemoveSpecialization(spec.KeyName);
+                var speclist = GetSpecList();
+                var careerslist = careers.Keys.Select(k => k.KeyName.ToLower());
+                foreach (var spec in speclist.Where(sp => sp.Trainable || !sp.AllowSave))
+                {
+                    if (!careerslist.Contains(spec.KeyName.ToLower()))
+                        RemoveSpecialization(spec.KeyName);
+                }
             }
 
             // sort ML Spec depending on ML Line

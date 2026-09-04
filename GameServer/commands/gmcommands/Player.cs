@@ -2158,7 +2158,61 @@ namespace DOL.GS.Commands
                                 break;
                         }
                     }
-                    break; 
+                    break;
+                #endregion
+
+                // zach-classless
+                // this is where I am adding test commands for classless players, so that they can be tested without having to implment a full prodcution process
+                /* 
+                    This will test if the player is a classless midgard class and allow the addition of a specialization to the player. This is for testing purposes only and will be removed in production.
+                */
+                #region classlessspec
+                case "classlessspec":
+                    {
+                        GamePlayer targetPlayer = client.Player.TargetObject as GamePlayer;
+
+                        if(targetPlayer == null)
+                        {
+                            DisplayMessage(client, "You must have a player target to use this command!");
+                            return;
+                        }
+
+                        if (args.Length < 3)
+                        {
+                            DisplayMessage(client, "Usage: /player classlessspec <specialization key name>");
+                            return;
+                        }
+
+                        if (targetPlayer.CharacterClass.ID != (int)eCharacterClass.ClasslessMidgard)
+                        {
+                            DisplayMessage(client, "Target player is not a Classless Midgard player!");
+                            return;
+                        }
+
+                        string specKeyName = args[2];
+
+                        if (targetPlayer.HasSpecialization(specKeyName))
+                        {
+                            DisplayMessage(client, $"Target player already has the specialization '{specKeyName}'!");
+                            return;
+                        }
+
+                        Specialization spec = SkillBase.GetSpecialization(specKeyName, false);
+
+                        if (spec == null)
+                        {
+                            DisplayMessage(client, $"Specialization '{specKeyName}' does not exist!");
+                            return;
+                        }
+
+                        targetPlayer.AddSpecialization(spec);
+                        targetPlayer.RefreshSpecDependantSkills(true);
+                        targetPlayer.Out.SendUpdatePlayerSkills(true);
+
+                        DisplayMessage(client, $"Added {spec.Name} to {targetPlayer.Name}.");
+
+                    }
+                    break;
                 #endregion
 
                 #region areas
