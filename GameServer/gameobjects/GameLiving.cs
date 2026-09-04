@@ -3330,12 +3330,12 @@ namespace DOL.GS
 			}
 		}
 
-		/// <summary>
-		/// Remove an ability from this living
-		/// </summary>
-		/// <param name="abilityKeyName"></param>
-		/// <returns></returns>
-		public virtual bool RemoveAbility(string abilityKeyName)
+        /// <summary>
+        /// Remove an ability from this living
+        /// </summary>
+        /// <param name="abilityKeyName"></param>
+        /// <returns></returns>
+        public virtual bool RemoveAbility(string abilityKeyName)
 		{
 			Ability ability = null;
 			lock (_abilitiesLock)

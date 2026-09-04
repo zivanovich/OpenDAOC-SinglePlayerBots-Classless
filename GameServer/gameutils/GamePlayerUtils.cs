@@ -518,6 +518,23 @@ namespace DOL.GS
                 List<(Skill, Skill)> newSpecs = new();
                 List<(Skill, Skill)> newOthers = new();
 
+                if (player.CharacterClass.ID ==
+                (int)eCharacterClass.ClasslessMidgard)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        var existingSkill = usableSkills[i];
+
+                        // Direct abilities use the ability itself as their parent.
+                        // Mark them as retained during the usable-skill rebuild.
+                        if (existingSkill.Item1 is Ability &&
+                            existingSkill.Item2 is Ability)
+                        {
+                            visited[i] = true;
+                        }
+                    }
+                }
+
                 IList<Specialization> specs = player.GetSpecList();
                 List<(Specialization spec, IDictionary<SpellLine, List<Skill>> spellLines)> hybridSpellLists = new(specs.Count);
 

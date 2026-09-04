@@ -2197,6 +2197,52 @@ namespace DOL.GS.Commands
                             return;
                         }
 
+                        // this was used for debugging the specialization and spell line retrieval process, but is not needed for the final implementation
+                        //if (targetPlayer.HasSpecialization(specKeyName))
+                        //{
+                        //    Specialization ownedSpec =
+                        //        targetPlayer.GetSpecializationByName(specKeyName);
+
+                        //    DisplayMessage(client,
+                        //        $"{targetPlayer.Name} already has {specKeyName} at level " +
+                        //        $"{ownedSpec.GetSpecLevelForLiving(targetPlayer)}.");
+
+                        //    DisplayMessage(client,
+                        //        $"Target class ID: {targetPlayer.CharacterClass.ID}");
+
+                        //    // Show every spell line cached under this specialization,
+                        //    // regardless of whether it applies to this character.
+                        //    foreach (var cachedEntry in
+                        //        SkillBase.GetSpecsSpellLines(specKeyName))
+                        //    {
+                        //        SpellLine cachedLine = cachedEntry.Item1;
+                        //        int cachedClassHint = cachedEntry.Item2;
+
+                        //        DisplayMessage(client,
+                        //            $"Cached line: {cachedLine.KeyName}, " +
+                        //            $"Base: {cachedLine.IsBaseLine}, " +
+                        //            $"Class hint: {cachedClassHint}");
+                        //    }
+
+                        //    // Retrieve only the spell lines that the specialization
+                        //    // considers applicable to this character.
+                        //    var applicableLines =
+                        //        ownedSpec.GetSpellLinesForLiving(targetPlayer);
+
+                        //    DisplayMessage(client,
+                        //        $"Applicable spell-line count: {applicableLines.Count}");
+
+                        //    foreach (SpellLine spellLine in applicableLines)
+                        //    {
+                        //        DisplayMessage(client,
+                        //            $"Spell line: {spellLine.KeyName}, " +
+                        //            $"Name: {spellLine.Name}, " +
+                        //            $"Level: {spellLine.Level}");
+                        //    }
+
+                        //    return;
+                        //}
+
                         Specialization spec = SkillBase.GetSpecialization(specKeyName, false);
 
                         if (spec == null)
@@ -2213,6 +2259,71 @@ namespace DOL.GS.Commands
 
                     }
                     break;
+                #endregion
+
+                #region classlessability
+                case "classlessability":
+                    {
+                        GamePlayer targetPlayer =
+                            client.Player.TargetObject as GamePlayer;
+
+                        if (targetPlayer == null)
+                        {
+                            DisplayMessage(client,
+                                "You must target a player to use this command.");
+                            return;
+                        }
+
+                        if (targetPlayer.CharacterClass.ID !=
+                            (int)eCharacterClass.ClasslessMidgard)
+                        {
+                            DisplayMessage(client,
+                                "The targeted player is not Classless Midgard.");
+                            return;
+                        }
+
+                        if (args.Length < 3)
+                        {
+                            DisplayMessage(client,
+                                "Usage: /player classlessability <ability key>");
+                            return;
+                        }
+
+                        // Ability keys may contain spaces, such as "Weaponry: Swords".
+                        string abilityKey = string.Join(" ", args.Skip(2));
+
+                        if (!SkillBase.IsAbilityRegistered(abilityKey))
+                        {
+                            DisplayMessage(client,
+                                $"Ability '{abilityKey}' does not exist. " +
+                                "Use the exact ability key.");
+                            return;
+                        }
+
+                        Ability ability = SkillBase.GetAbility(abilityKey, 0);
+
+                        if (ability == null)
+                        {
+                            DisplayMessage(client,
+                                $"Ability '{abilityKey}' was not found.");
+                            return;
+                        }
+
+                        if (targetPlayer.HasAbility(ability.KeyName))
+                        {
+                            DisplayMessage(client,
+                                $"{targetPlayer.Name} already has {ability.Name}.");
+                            return;
+                        }
+
+                        targetPlayer.AddPersistentAbility(ability);
+                        targetPlayer.Out.SendUpdatePlayerSkills(true);
+
+                        DisplayMessage(client,
+                            $"Added {ability.Name} to {targetPlayer.Name}.");
+
+                        break;
+                    }
                 #endregion
 
                 #region areas

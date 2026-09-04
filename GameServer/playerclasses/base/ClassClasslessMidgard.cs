@@ -24,22 +24,29 @@ namespace DOL.GS.PlayerClass
 	[CharacterClass((int)eCharacterClass.ClasslessMidgard, "Classless Midgard", "Classless Midgard")]
 	public class ClassClasslessMidgard : CharacterClassBase
 	{
-		public ClassClasslessMidgard()
+        // added m_manaStat to allow for spell casting and hybrid abilities
+        // added primary, secondary, and tertiary stats
+        public ClassClasslessMidgard()
 			: base()
 		{
 			m_specializationMultiplier = 10;
-			m_wsbase = 440;
+            m_primaryStat = eStat.STR;
+            m_secondaryStat = eStat.PIE;
+            m_tertiaryStat = eStat.CON;
+            m_wsbase = 440;
 			m_baseHP = 880;
-		}
+            m_manaStat = eStat.PIE;
+        }
 
 		public override string GetTitle(GamePlayer player, int level)
 		{
 			return HasAdvancedFromBaseClass() ? base.GetTitle(player, level) : base.GetTitle(player, 0);
 		}
 
-		public override eClassType ClassType
+        //change to Hybrid from PureTank to allow for spell casting and hybrid abilities
+        public override eClassType ClassType
 		{
-			get { return eClassType.PureTank; }
+			get { return eClassType.Hybrid; }
 		}
 
 		public override GameTrainer.eChampionTrainerType ChampionTrainerType()
@@ -49,7 +56,7 @@ namespace DOL.GS.PlayerClass
 
 		public override bool HasAdvancedFromBaseClass()
 		{
-			return false;
+			return true;
 		}
 
 		public override List<PlayerRace> EligibleRaces => new List<PlayerRace>()

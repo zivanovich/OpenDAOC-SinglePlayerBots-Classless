@@ -2256,13 +2256,30 @@ namespace DOL.GS
 			return GetAbility($"DBID:{databaseID}", 1);
 		}
 
-		/// <summary>
-		/// Get Ability by Keyname and Level
-		/// </summary>
-		/// <param name="keyname"></param>
-		/// <param name="level"></param>
-		/// <returns></returns>
-		public static Ability GetAbility(string keyname, int level)
+        public static bool IsAbilityRegistered(string keyname)
+        {
+            if (string.IsNullOrWhiteSpace(keyname))
+                return false;
+
+            m_syncLockUpdates.EnterReadLock();
+
+            try
+            {
+                return m_abilityIndex.ContainsKey(keyname);
+            }
+            finally
+            {
+                m_syncLockUpdates.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Get Ability by Keyname and Level
+        /// </summary>
+        /// <param name="keyname"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public static Ability GetAbility(string keyname, int level)
 		{
 			m_syncLockUpdates.EnterReadLock();
 			DbAbility dbab = null;

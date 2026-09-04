@@ -3190,6 +3190,33 @@ namespace DOL.GS
             base.AddAbility(ability, sendUpdates);
         }
 
+        /// zach_classless
+        /// <summary>
+        /// Adds an ability and records it in the player's persistent usable-skill list.
+        /// Intended for individually granted Classless abilities.
+        /// </summary>
+        public virtual void AddPersistentAbility(
+            Ability ability,
+            bool sendUpdates = true)
+        {
+            if (ability == null)
+                return;
+
+            // Add and activate the ability through the existing system.
+            AddAbility(ability, sendUpdates);
+
+            // Add it to the collection used by the client and SerializedAbilities.
+            lock (_usableSkillsLock)
+            {
+                bool alreadyUsable = _usableSkills.Any(entry =>
+                    entry.Item1 is Ability existingAbility &&
+                    existingAbility.KeyName == ability.KeyName);
+
+                if (!alreadyUsable)
+                    _usableSkills.Add(new(ability, ability));
+            }
+        }
+
         /// <summary>
         /// Adds a Realm Ability to the player
         /// </summary>
