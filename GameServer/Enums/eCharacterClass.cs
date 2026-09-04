@@ -42,9 +42,10 @@ namespace DOL.GS
 		Seer = 37,
 		Stalker = 54,
 		Viking = 35,
+        ClasslessMidgard = 63,
 
-		//alb classes
-		Armsman = 2,
+        //alb classes
+        Armsman = 2,
 		Cabalist = 13,
 		Cleric = 6,
 		Friar = 10,
